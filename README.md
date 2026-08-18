@@ -2,8 +2,7 @@
 
 Group project repository for CITS5501/CITS3501 Software Testing and Quality Assurance, Semester 2 2026.
 
-Setup:
-Step 1. Ensure environment is as per project specifications:
+When in development ensure environment is as per project specifications:
 Ubuntu 22.04 (x86-64 processor) witht he following packages installed:
 -python3
 -uv
@@ -22,7 +21,7 @@ Ubuntu 22.04 (x86-64 processor) witht he following packages installed:
         Install the VSCode extensions:
             Dev Containers by Microsoft
             Container Tools by Microsoft
-    Step 2. Open the project in the container
+    2. Open the project in the container
         Use Ctrl+Shift+P (in vscode) and select:
             Dev Containers: Reopen in Container
 
