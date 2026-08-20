@@ -34,6 +34,7 @@ Ubuntu 22.04 (x86-64 processor) witht he following packages installed:
             python3 --version
             uv --version
             javac --version
+            git --version
             pwd
             ls
             python3 webscraper/main.py
@@ -42,6 +43,7 @@ Ubuntu 22.04 (x86-64 processor) witht he following packages installed:
             Python 3.10.12
             uv 0.12.5 (x86_64-unknown-linux-musl)
             javac 21.0.11
+            git version 2.34.1
             /workspace
             README.md  webscraper
             Hello from the web scraper!
