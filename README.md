@@ -1,51 +1,106 @@
-# CITS5501-3501-Group-Project
+# CITS5501/CITS3501 Group Project – Policy Scraper Prototype
 
 Group project repository for CITS5501/CITS3501 Software Testing and Quality Assurance, Semester 2 2026.
 
-When in development ensure environment is as per project specifications:
-Ubuntu 22.04 (x86-64 processor) witht he following packages installed:
--python3
--uv
--openjdk-21-jdk
+`scraper.py` is a minimal prototype (Phase 2, Task 1) that starts from the
+[UWA policy index page](https://uwa-policy.cits5501.arranstewart.io/policy/),
+finds links that look like policy documents, downloads three distinct documents
+and prints their metadata. Downloaded data is discarded; nothing is written to disk.
 
-    For those not already in the correct environment:
-    1. Download and setup Docker for the appropriate OS and architecture (if not already downloaded)
-        - Go to https://www.docker.com/products/docker-desktop/ and download for your OS and Architecture, check Settings for the correct OS and architecture
-        - Once downloaded open powershell and the following should run
-            docker --version
-            docker run hello-world
-        (if docker run hello-world does not run install WSL as prompted)
+## Repository contents
 
-        Restart computer if required
+| Path | Description |
+| --- | --- |
+| `scraper.py` | Task 1 prototype scraper |
+| `requirements.txt` | Python dependencies (`requests`, `beautifulsoup4`) |
+| `.python-version` | Python version used by uv (3.12) |
+| `.devcontainer/` | Development container (Ubuntu 22.04, Python, uv, OpenJDK 21, Git) |
 
-        Install the VSCode extensions:
-            Dev Containers by Microsoft
-            Container Tools by Microsoft
-    2. Open the project in the container
-        Use Ctrl+Shift+P (in vscode) and select:
-            Dev Containers: Reopen in Container
+## Requirements
 
-        The container should load in a workspace called Dev Container
+- [uv](https://docs.astral.sh/uv/) (recommended), or Python 3.11+ with `pip`
+- Network access to `https://uwa-policy.cits5501.arranstewart.io`
 
-        The current Directory in the terminal attached to VSCode should be under:
-            root@xxx:/workspace#
+uv downloads a suitable Python version and the dependencies automatically on first run.
 
-        Once in the container copy paste and run the following into the terminal:
-            python3 --version
-            uv --version
-            javac --version
-            git --version
-            pwd
-            ls
-            python3 webscraper/main.py
+## Running the prototype
 
-        The expected output should be:
-            Python 3.10.12
-            uv 0.12.5 (x86_64-unknown-linux-musl)
-            javac 21.0.11
-            git version 2.34.1
-            /workspace
-            README.md  webscraper
-            Hello from the web scraper!
-            Operating system: Linux
-            Architecture: x86_64
+From the repository root:
+
+```bash
+uv run --with-requirements requirements.txt scraper.py
+```
+
+To start from a different index page, such as a local copy of the site used for testing:
+
+```bash
+uv run --with-requirements requirements.txt scraper.py http://localhost:3000/
+```
+
+### Without uv
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python3 scraper.py
+```
+
+## Output
+
+The scraper prints:
+
+1. the index page URL, HTTP status and content type;
+2. every link found on the index page, and how many look like policy documents;
+3. for each of the three documents downloaded: the policy URL, HTTP status,
+   declared `Content-Type`, downloaded size in bytes and the first 10 bytes of the body
+   (`%PDF` indicates a PDF, `PK` an Office Open XML file such as `.docx`);
+4. the total number of requests made.
+
+Example (run against a local test copy of the site):
+
+```text
+Policy URL: http://localhost:3000/policy/a.pdf
+HTTP status: 200
+Content type: application/pdf
+Downloaded size: 13 bytes
+Initial bytes: b'%PDF-1.4 f'
+Downloaded successfully
+...
+Requests made: 4 (limit 20)
+```
+
+## Request limits
+
+All requests go through `fetch()`, which applies a 10-second timeout, sends a
+User-Agent header, waits 1 second between requests and stops after 20 requests.
+These limits should be kept when running against the live site.
+
+## Known limitations
+
+The prototype is deliberately minimal. In particular, it treats any `200 OK`
+response as a successful download, identifies documents by file extension only,
+and does not handle timeouts or connection errors. See the Phase 2 report
+(Task 1) for the full list of limitations and assumptions.
+
+## Development environment
+
+The marking environment is Ubuntu 22.04 (x86-64) with `python3`, `uv` and
+`openjdk-21-jdk`. To develop in a matching environment:
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and check it works:
+   ```bash
+   docker --version
+   docker run hello-world
+   ```
+   (On Windows, install WSL if prompted, then restart.)
+2. In VS Code, install the **Dev Containers** and **Container Tools** extensions (Microsoft).
+3. Open the repository and run **Dev Containers: Reopen in Container** (`Ctrl+Shift+P`).
+   The terminal should open in `/workspace`.
+4. Check the toolchain:
+   ```bash
+   python3 --version   # Python 3.10.12
+   uv --version
+   javac --version     # javac 21
+   git --version
+   ```
