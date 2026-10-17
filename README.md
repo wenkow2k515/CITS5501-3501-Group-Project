@@ -122,8 +122,9 @@ The marking environment is Ubuntu 22.04 (x86-64) with `python3`, `uv` and
    The terminal should open in `/workspace`.
 4. Check the toolchain:
    ```bash
-   python3 --version   # Python 3.10.12
+   python3 --version   # Python 3.10.12 (Ubuntu's system Python)
    uv --version
    javac --version     # javac 21
    git --version
    ```
+      The scraper itself runs on Python 3.12: uv reads `.python-version` and downloads 3.12 automatically the first time you use `uv run`.
