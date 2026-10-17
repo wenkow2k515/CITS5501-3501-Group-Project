@@ -14,6 +14,8 @@ and prints their metadata. Downloaded data is discarded; nothing is written to d
 | `scraper.py` | Task 1 prototype scraper |
 | `requirements.txt` | Python dependencies (`requests`, `beautifulsoup4`) |
 | `.python-version` | Python version used by uv (3.12) |
+| `fixtures/fake_pdf_server.py` | Task 3 fixture: local server with a valid, a fake and a corrupt PDF |
+| `tests/test_fake_pdf.py` | Task 3 demonstration test against the fixture server |
 | `.devcontainer/` | Development container (Ubuntu 22.04, Python, uv, OpenJDK 21, Git) |
 
 ## Requirements
@@ -75,6 +77,27 @@ Requests made: 4 (limit 20)
 All requests go through `fetch()`, which applies a 10-second timeout, sends a
 User-Agent header, waits 1 second between requests and stops after 20 requests.
 These limits should be kept when running against the live site.
+
+## Task 3 fixture and test
+
+`fixtures/fake_pdf_server.py` serves a small copy of a policy index on
+`http://localhost:3000/policy/` that links to one valid PDF, one HTML page
+served under a `.pdf` URL, and one truncated PDF. It uses only the Python
+standard library. To see the prototype accept the two broken documents:
+
+```bash
+python3 fixtures/fake_pdf_server.py          # terminal 1
+uv run --with-requirements requirements.txt scraper.py http://localhost:3000/policy/   # terminal 2
+```
+
+The same scenario as an automated test (the server is started by the test):
+
+```bash
+uv run --with-requirements requirements.txt --with pytest pytest tests/
+```
+
+Against the current prototype, one test passes and two fail. The failures are
+expected: they show the prototype reporting invalid documents as successful.
 
 ## Known limitations
 
